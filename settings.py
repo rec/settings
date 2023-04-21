@@ -11,30 +11,6 @@ _NONE = object()
 
 
 class Settings:
-    _settings_modified = None
-
-    def __post_init__(self):
-        self._settings_modified = set()
-
-    def __setattr__(self, k: str, v: Any):
-        if self._settings_modified is None:  # During construction
-            super().__setattr__(k, v)
-        else:
-            self.__dict__[k] = v
-            self._settings_modified.add(k)
-
-    def modified(self):
-        result = {}
-        for k, v in vars(self).items():
-            if k in self._settings_modified:
-                result[k] = v
-            elif isinstance(v, Settings) and not k.startswith('_'):
-                d = v.modified()
-                if d:
-                    result[k] = d
-
-        return result
-
     def diff(self, other: Any):
         assert self.__class__ is other.__class__
         result = {}

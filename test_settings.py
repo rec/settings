@@ -31,22 +31,12 @@ class Everything(Settings):
 
 def test_simple():
     e = Everything()
-    assert e.modified() == {}
+    assert e.diff(e) == {}
+    assert Everything().diff(e) == {}
 
     e.dmx.channel = 3
-    assert e.modified() == {'dmx': {'channel': 3}}
-
-
-def test_lists():
-    e = Everything()
-    assert e.modified() == {}
-
-    e.audio.levels[:] = [1.0, 2.0]
-    assert e.modified() == {}
-    # Can't detect this
-
-    e.audio.levels = [1.0, 2.0]
-    assert e.modified() == {'audio': {'levels': [1.0, 2.0]}}
+    assert e.diff(e) == {}
+    assert Everything().diff(e) == {'dmx': {'channel': 3}}
 
 
 def test_diff():
