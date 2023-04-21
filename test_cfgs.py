@@ -1,29 +1,30 @@
 import dataclasses as dc
-from settings import Settings
+from cfgs import Configs
 from typing import List
+
 
 def field(factory):
     return dc.field(default_factory=factory)
 
 
 @dc.dataclass
-class Audio(Settings):
+class Audio(Configs):
     levels: List[float] = field(list)
 
 
 @dc.dataclass
-class DMX(Settings):
+class DMX(Configs):
     channel: int = 0
 
 
 @dc.dataclass
-class Midi(Settings):
+class Midi(Configs):
     channel: int = 0
     name: str = ''
 
 
 @dc.dataclass
-class Everything(Settings):
+class Everything(Configs):
     audio: Audio = field(Audio)
     dmx: DMX = field(DMX)
     midi: Midi = field(Midi)
@@ -45,8 +46,3 @@ def test_diff():
 
     assert Everything().diff(e) == {'audio': {'levels': [1.0, 2.0]}}
     assert e.diff(Everything()) == {'audio': {'levels': []}}
-
-
-
-if __name__ == '__main__':
-    d = dc.asdict(Everything())

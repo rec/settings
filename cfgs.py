@@ -10,15 +10,15 @@ File = Tuple[Union[Path, str]]
 _NONE = object()
 
 
-class Settings:
+class Configs:
     def diff(self, other: Any):
         assert self.__class__ is other.__class__
         result = {}
         for f in dc.fields(self):
             s, o = getattr(self, f.name), getattr(other, f.name)
             if s != o:
-                if isinstance(s, Settings):
-                    assert isinstance(o, Settings)
+                if isinstance(s, Configs):
+                    assert isinstance(o, Configs)
                     o = s.diff(o)
                 result[f.name] = o
 
@@ -27,7 +27,7 @@ class Settings:
     def copy_from(self, **kwargs):
         for k, v in kwargs.items():
             attr = getattr(self, k)
-            if isinstance(attr, Settings):
+            if isinstance(attr, Configs):
                 attr.copy_from(**v)
             else:
                 setattr(self, k, v)
@@ -59,9 +59,9 @@ class Settings:
             elif not verbose:
                 continue
             elif not splits:
-                print('No settings match', k, file=sys.err)
+                print('No configs match', k, file=sys.err)
             else:
-                print('More than one setting matches', k, file=sys.err)
+                print('More than one config matches', k, file=sys.err)
 
 
 def _split_address(parent, key):
