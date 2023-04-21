@@ -1,6 +1,7 @@
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, Union
+import dataclasses as dc
 import json
 import os
 import sys
@@ -23,16 +24,29 @@ class Settings:
             self._settings_modified.add(k)
 
     def modified(self):
-        results = {}
+        result = {}
         for k, v in vars(self).items():
             if k in self._settings_modified:
-                results[k] = v
+                result[k] = v
             elif isinstance(v, Settings) and not k.startswith('_'):
                 d = v.modified()
                 if d:
-                    results[k] = d
+                    result[k] = d
 
-        return results
+        return result
+
+    def diff(self, other: Any):
+        assert self.__class__ is other.__class__
+        result = {}
+        for f in dc.fields(self):
+            s, o = getattr(self, f.name), getattr(other, f.name)
+            if s != o:
+                if isinstance(s, Settings):
+                    assert isinstance(o, Settings)
+                    o = s.diff(o)
+                result[f.name] = o
+
+        return result
 
     def copy_from(self, **kwargs):
         for k, v in kwargs.items():

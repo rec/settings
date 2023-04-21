@@ -47,3 +47,16 @@ def test_lists():
 
     e.audio.levels = [1.0, 2.0]
     assert e.modified() == {'audio': {'levels': [1.0, 2.0]}}
+
+
+def test_diff():
+    e = Everything()
+    e.audio.levels[:] = [1.0, 2.0]
+
+    assert Everything().diff(e) == {'audio': {'levels': [1.0, 2.0]}}
+    assert e.diff(Everything()) == {'audio': {'levels': []}}
+
+
+
+if __name__ == '__main__':
+    d = dc.asdict(Everything())
